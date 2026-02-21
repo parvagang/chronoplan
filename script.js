@@ -46,6 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logout-btn');
     const ringtoneSelect = document.getElementById('ringtone-select');
     const testSoundBtn = document.getElementById('test-sound-btn');
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
     const userProfile = document.querySelector('.user-profile');
 
     let currentUser = JSON.parse(localStorage.getItem('chronoPlan_user')) || null;
@@ -308,6 +311,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.clear();
                 location.reload();
             }
+        });
+
+        // Mobile Sidebar Logic
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+
+        // Close sidebar on nav item click (mobile)
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
         });
     }
 
