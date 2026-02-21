@@ -71,7 +71,7 @@ h3 {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    padding: 24px;
+    padding: 20px;
     transition: all 0.3s ease;
 }
 
@@ -81,7 +81,7 @@ h3 {
     gap: 12px;
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
     color: var(--text-primary);
 }
 
@@ -96,7 +96,7 @@ h3 {
 }
 
 .nav-section {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .nav-section h3 {
@@ -209,7 +209,7 @@ h3 {
 /* Main Content Styling */
 .main-content {
     flex: 1;
-    padding: 40px;
+    padding: 24px;
     overflow-y: auto;
     background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-deep) 70%);
 }
@@ -218,7 +218,7 @@ h3 {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
 }
 
 .header-left h1 {
