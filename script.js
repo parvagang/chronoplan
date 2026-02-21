@@ -47,10 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const logoutBtn = document.getElementById('logout-btn');
     const ringtoneSelect = document.getElementById('ringtone-select');
-    const startSoundBtn = document.getElementById('start-sound-btn');
-    const stopSoundBtnMenu = document.getElementById('stop-sound-btn-menu');
-    const volumeSlider = document.getElementById('volume-slider');
-    const volumeValue = document.getElementById('volume-value');
+    const ringtonePlate = document.getElementById('ringtone-plate');
+    const plateSoundName = document.getElementById('plate-sound-name');
+    const plateStatus = document.getElementById('plate-status');
+    const plateVolumeSlider = document.getElementById('plate-volume-slider');
+    const plateVolumeValue = document.getElementById('plate-volume-value');
+    const platePlayBtn = document.getElementById('plate-play-btn');
+    const plateStopBtn = document.getElementById('plate-stop-btn');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const sidebar = document.querySelector('.sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -76,9 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
         applyUserStatus();
         setInterval(checkReminders, 10000); // Check every 10 seconds
-        ringtoneSelect.value = userSettings.ringtone;
-        volumeSlider.value = (userSettings.volume || 0.8) * 100;
-        volumeValue.textContent = `${volumeSlider.value}%`;
+
+        if (userSettings.ringtone) {
+            ringtoneSelect.value = userSettings.ringtone;
+            updateRingtonePlate();
+        }
+
+        plateVolumeSlider.value = (userSettings.volume || 0.8) * 100;
+        plateVolumeValue.textContent = `${plateVolumeSlider.value}%`;
         updateAllAudioVolume();
     }
 
@@ -200,6 +208,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveLists() {
         localStorage.setItem('chronoPlan_lists', JSON.stringify(lists));
+    }
+
+    function updateRingtonePlate() {
+        if (!ringtoneSelect.value) {
+            ringtonePlate.style.display = 'none';
+            return;
+        }
+
+        ringtonePlate.style.display = 'block';
+        const selectedOption = ringtoneSelect.options[ringtoneSelect.selectedIndex];
+        plateSoundName.textContent = selectedOption.textContent;
+        plateStatus.textContent = 'Ready';
+        plateStatus.style.color = 'var(--text-secondary)';
     }
 
     function checkReminders() {
@@ -347,20 +368,26 @@ document.addEventListener('DOMContentLoaded', () => {
         ringtoneSelect.addEventListener('change', () => {
             userSettings.ringtone = ringtoneSelect.value;
             localStorage.setItem('chronoPlan_settings', JSON.stringify(userSettings));
-        });
-
-        startSoundBtn.addEventListener('click', () => {
-            playRingtone();
-        });
-
-        stopSoundBtnMenu.addEventListener('click', () => {
+            updateRingtonePlate();
             stopRingtone();
         });
 
-        volumeSlider.addEventListener('input', () => {
-            const vol = volumeSlider.value / 100;
+        platePlayBtn.addEventListener('click', () => {
+            playRingtone();
+            plateStatus.textContent = 'Playing...';
+            plateStatus.style.color = 'var(--accent-blue)';
+        });
+
+        plateStopBtn.addEventListener('click', () => {
+            stopRingtone();
+            plateStatus.textContent = 'Stopped';
+            plateStatus.style.color = 'var(--text-secondary)';
+        });
+
+        plateVolumeSlider.addEventListener('input', () => {
+            const vol = plateVolumeSlider.value / 100;
             userSettings.volume = vol;
-            volumeValue.textContent = `${volumeSlider.value}%`;
+            plateVolumeValue.textContent = `${plateVolumeSlider.value}%`;
             localStorage.setItem('chronoPlan_settings', JSON.stringify(userSettings));
             updateAllAudioVolume();
         });

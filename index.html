@@ -205,7 +205,8 @@
                 <button class="close-modal">&times;</button>
             </div>
             <div class="form-group">
-                <select id="ringtone-select" style="margin-bottom: 15px;">
+                <select id="ringtone-select" style="margin-bottom: 20px;">
+                    <option value="" disabled selected>Choose a sound...</option>
                     <option value="chime">Crystal Chime</option>
                     <option value="pulse">Digital Pulse</option>
                     <option value="zen">Zen Gong</option>
@@ -216,22 +217,36 @@
                     <option value="morning">Morning Soft</option>
                 </select>
 
-                <div class="volume-control" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <label style="margin: 0;">Volume</label>
-                        <span id="volume-value" style="font-size: 0.8rem; color: var(--accent-blue);">80%</span>
+                <!-- Ringtone Plate (Dynamic) -->
+                <div id="ringtone-plate" class="ringtone-plate" style="display: none;">
+                    <div class="plate-header">
+                        <div class="plate-info">
+                            <i data-lucide="music" class="plate-icon"></i>
+                            <div>
+                                <h4 id="plate-sound-name">Sound Name</h4>
+                                <span id="plate-status">Ready</span>
+                            </div>
+                        </div>
                     </div>
-                    <input type="range" id="volume-slider" min="0" max="100" value="80" class="premium-slider">
-                </div>
 
-                <div class="sound-btns" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <button id="start-sound-btn" class="btn-primary">
-                        <i data-lucide="play"></i> Start Sound
-                    </button>
-                    <button id="stop-sound-btn-menu" class="btn-secondary"
-                        style="color: var(--danger); border-color: var(--danger);">
-                        <i data-lucide="square"></i> Stop Sound
-                    </button>
+                    <div class="volume-control" style="margin: 20px 0;">
+                        <input type="range" id="plate-volume-slider" min="0" max="100" value="80"
+                            class="premium-slider">
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Mute</span>
+                            <span id="plate-volume-value"
+                                style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 600;">80%</span>
+                        </div>
+                    </div>
+
+                    <div class="plate-actions">
+                        <button id="plate-play-btn" class="plate-btn play">
+                            <i data-lucide="play"></i> Start
+                        </button>
+                        <button id="plate-stop-btn" class="plate-btn stop">
+                            <i data-lucide="square"></i> Stop
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
