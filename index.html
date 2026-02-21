@@ -211,6 +211,10 @@
                     <option value="pulse">Digital Pulse</option>
                     <option value="zen">Zen Gong</option>
                     <option value="alert">Tech Alert</option>
+                    <option value="calm">Calm Melody</option>
+                    <option value="forest">Forest Birds</option>
+                    <option value="ocean">Ocean Waves</option>
+                    <option value="morning">Morning Soft</option>
                 </select>
                 <button id="test-sound-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">
                     <i data-lucide="play"></i> Test Sound
@@ -231,10 +235,35 @@
     </div>
 
     <!-- Audio elements for ringtones -->
-    <audio id="sound-chime" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-    <audio id="sound-pulse" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-    <audio id="sound-zen" src="https://assets.mixkit.co/active_storage/sfx/2566/2566-preview.mp3"></audio>
-    <audio id="sound-alert" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"></audio>
+    <audio id="sound-chime" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" loop></audio>
+    <audio id="sound-pulse" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" loop></audio>
+    <audio id="sound-zen" src="https://assets.mixkit.co/active_storage/sfx/2566/2566-preview.mp3" loop></audio>
+    <audio id="sound-alert" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" loop></audio>
+    <audio id="sound-calm" src="https://assets.mixkit.co/active_storage/sfx/2638/2638-preview.mp3" loop></audio>
+    <audio id="sound-forest" src="https://assets.mixkit.co/active_storage/sfx/138/138-preview.mp3" loop></audio>
+    <audio id="sound-ocean" src="https://assets.mixkit.co/active_storage/sfx/1113/1113-preview.mp3" loop></audio>
+    <audio id="sound-morning" src="https://assets.mixkit.co/active_storage/sfx/2565/2565-preview.mp3" loop></audio>
+
+    <!-- Reminder Alert Modal -->
+    <div id="reminder-modal" class="modal">
+        <div class="modal-content glass alarm-content">
+            <div class="alarm-icon-container">
+                <i data-lucide="bell" class="alarm-bell-icon"></i>
+            </div>
+            <h2 id="reminder-title">Task Reminder</h2>
+            <p id="reminder-time" style="color: var(--accent-blue); font-weight: 600; margin-bottom: 5px;"></p>
+            <p id="reminder-desc" style="color: var(--text-secondary); margin-bottom: 30px;"></p>
+
+            <div class="alarm-actions">
+                <button id="snooze-btn" class="btn-secondary">
+                    <i data-lucide="clock"></i> Snooze 5m
+                </button>
+                <button id="stop-alarm-btn" class="btn-primary" style="background: var(--danger);">
+                    <i data-lucide="square"></i> Stop
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
     <script>

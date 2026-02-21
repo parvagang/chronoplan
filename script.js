@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let lists = JSON.parse(localStorage.getItem('chronoPlan_lists')) || ['Work', 'Personal', 'Fitness', 'Shopping'];
     let currentFilter = 'all'; // all, today, upcoming
     let editingTaskId = null;
+    let triggeredReminders = new Set();
+    let currentAlarmTask = null;
 
     // --- DOM Elements ---
     const tasksContainer = document.getElementById('tasks-container');
@@ -51,6 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     const userProfile = document.querySelector('.user-profile');
 
+    // Alarm Modal Elements
+    const reminderModal = document.getElementById('reminder-modal');
+    const snoozeBtn = document.getElementById('snooze-btn');
+    const stopAlarmBtn = document.getElementById('stop-alarm-btn');
+    const reminderTitle = document.getElementById('reminder-title');
+    const reminderTime = document.getElementById('reminder-time');
+    const reminderDesc = document.getElementById('reminder-desc');
+
     let currentUser = JSON.parse(localStorage.getItem('chronoPlan_user')) || null;
     let userSettings = JSON.parse(localStorage.getItem('chronoPlan_settings')) || { ringtone: 'chime' };
 
@@ -62,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateListSelect();
         setupEventListeners();
         applyUserStatus();
+        setInterval(checkReminders, 10000); // Check every 10 seconds
         ringtoneSelect.value = userSettings.ringtone;
     }
 
@@ -183,6 +194,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveLists() {
         localStorage.setItem('chronoPlan_lists', JSON.stringify(lists));
+    }
+
+    function checkReminders() {
+        const now = new Date();
+        const currentTimeStr = now.toTimeString().slice(0, 5);
+        const currentDateStr = now.toISOString().split('T')[0];
+
+        tasks.forEach(task => {
+            if (task.reminder && !task.completed && task.date === currentDateStr && task.time === currentTimeStr) {
+                if (!triggeredReminders.has(task.id)) {
+                    triggerAlarm(task);
+                }
+            }
+        });
+    }
+
+    function triggerAlarm(task) {
+        currentAlarmTask = task;
+        triggeredReminders.add(task.id);
+
+        reminderTitle.textContent = task.title;
+        reminderTime.textContent = `Time: ${task.time}`;
+        reminderDesc.textContent = task.desc || 'No description provided.';
+
+        reminderModal.classList.add('active');
+        playRingtone();
+
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('Task Reminder', { body: task.title });
+        }
     }
 
     // --- Event Listeners ---
@@ -337,6 +378,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // Alarm Handlers
+        stopAlarmBtn.addEventListener('click', () => {
+            stopRingtone();
+            reminderModal.classList.remove('active');
+            currentAlarmTask = null;
+        });
+
+        snoozeBtn.addEventListener('click', () => {
+            if (!currentAlarmTask) return;
+
+            stopRingtone();
+            reminderModal.classList.remove('active');
+
+            // Snooze: Re-schedule for 5 minutes later
+            const [hours, minutes] = currentAlarmTask.time.split(':').map(Number);
+            let snoozeDate = new Date();
+            snoozeDate.setHours(hours);
+            snoozeDate.setMinutes(minutes + 5);
+
+            const snoozeTimeStr = snoozeDate.toTimeString().slice(0, 5);
+
+            // Find task and update it
+            const taskIndex = tasks.findIndex(t => t.id === currentAlarmTask.id);
+            if (taskIndex !== -1) {
+                tasks[taskIndex].time = snoozeTimeStr;
+                triggeredReminders.delete(currentAlarmTask.id); // Allow it to fire again
+                saveTasks();
+                renderTasks();
+            }
+
+            currentAlarmTask = null;
+        });
     }
 
     function handleSocialLogin(email, name, provider) {
@@ -367,8 +441,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const sound = document.getElementById(`sound-${userSettings.ringtone}`);
         if (sound) {
             sound.currentTime = 0;
-            sound.play();
+            sound.play().catch(e => console.log("Audio play failed:", e));
         }
+    }
+
+    function stopRingtone() {
+        const sounds = document.querySelectorAll('audio');
+        sounds.forEach(s => {
+            s.pause();
+            s.currentTime = 0;
+        });
     }
 
     function attachTaskListeners() {

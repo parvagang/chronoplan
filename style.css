@@ -607,6 +607,68 @@ textarea:focus {
     }
 }
 
+@keyframes bellRing {
+
+    0%,
+    100% {
+        transform: rotate(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: rotate(15deg);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: rotate(-15deg);
+    }
+}
+
+.alarm-content {
+    text-align: center;
+    padding: 40px !important;
+}
+
+.alarm-icon-container {
+    width: 80px;
+    height: 80px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.alarm-bell-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--accent-blue);
+    animation: bellRing 2s infinite ease-in-out;
+}
+
+.alarm-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.alarm-actions .btn-secondary,
+.alarm-actions .btn-primary {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 14px;
+}
+
 body::before {
     animation: blobFloat 20s infinite alternate ease-in-out;
 }
