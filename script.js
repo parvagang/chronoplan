@@ -47,7 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const logoutBtn = document.getElementById('logout-btn');
     const ringtoneSelect = document.getElementById('ringtone-select');
-    const testSoundBtn = document.getElementById('test-sound-btn');
+    const startSoundBtn = document.getElementById('start-sound-btn');
+    const stopSoundBtnMenu = document.getElementById('stop-sound-btn-menu');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValue = document.getElementById('volume-value');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const sidebar = document.querySelector('.sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -62,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reminderDesc = document.getElementById('reminder-desc');
 
     let currentUser = JSON.parse(localStorage.getItem('chronoPlan_user')) || null;
-    let userSettings = JSON.parse(localStorage.getItem('chronoPlan_settings')) || { ringtone: 'chime' };
+    let userSettings = JSON.parse(localStorage.getItem('chronoPlan_settings')) || { ringtone: 'chime', volume: 0.8 };
 
     // --- Initialization ---
     function init() {
@@ -74,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
         applyUserStatus();
         setInterval(checkReminders, 10000); // Check every 10 seconds
         ringtoneSelect.value = userSettings.ringtone;
+        volumeSlider.value = (userSettings.volume || 0.8) * 100;
+        volumeValue.textContent = `${volumeSlider.value}%`;
+        updateAllAudioVolume();
     }
 
     // --- Core Functions ---
@@ -343,8 +349,20 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('chronoPlan_settings', JSON.stringify(userSettings));
         });
 
-        testSoundBtn.addEventListener('click', () => {
+        startSoundBtn.addEventListener('click', () => {
             playRingtone();
+        });
+
+        stopSoundBtnMenu.addEventListener('click', () => {
+            stopRingtone();
+        });
+
+        volumeSlider.addEventListener('input', () => {
+            const vol = volumeSlider.value / 100;
+            userSettings.volume = vol;
+            volumeValue.textContent = `${volumeSlider.value}%`;
+            localStorage.setItem('chronoPlan_settings', JSON.stringify(userSettings));
+            updateAllAudioVolume();
         });
 
         document.getElementById('clear-data-btn').addEventListener('click', () => {
@@ -438,11 +456,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playRingtone() {
+        // Stop any currently playing audio first
+        stopRingtone();
+
         const sound = document.getElementById(`sound-${userSettings.ringtone}`);
         if (sound) {
+            sound.volume = userSettings.volume || 0.8;
             sound.currentTime = 0;
             sound.play().catch(e => console.log("Audio play failed:", e));
         }
+    }
+
+    function updateAllAudioVolume() {
+        const sounds = document.querySelectorAll('audio');
+        sounds.forEach(s => {
+            s.volume = userSettings.volume || 0.8;
+        });
     }
 
     function stopRingtone() {
