@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoPlan | Premium Schedule Management</title>
+    <meta name="description"
+        content="A premium, dark-themed schedule manager for tracking tasks, lists, and reminders.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="calendar-check" class="logo-icon"></i>
+                <span>ChronoPlan</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Schedules</h3>
+                    <button class="nav-item active" data-filter="all">
+                        <i data-lucide="layout-grid"></i> All Tasks
+                    </button>
+                    <button class="nav-item" data-filter="today">
+                        <i data-lucide="sun"></i> Today
+                    </button>
+                    <button class="nav-item" data-filter="upcoming">
+                        <i data-lucide="calendar"></i> Upcoming
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-header">
+                        <h3>My Lists</h3>
+                        <button id="add-list-btn" title="Add New List"><i data-lucide="plus"></i></button>
+                    </div>
+                    <div id="lists-container">
+                        <!-- Lists will be injected here -->
+                    </div>
+                </div>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar">U</div>
+                <div class="user-info">
+                    <span class="user-name">User</span>
+                    <span class="user-plan">Pro Member</span>
+                </div>
+                <i data-lucide="settings" class="settings-icon"></i>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="current-view-title">All Tasks</h1>
+                    <p id="current-date-display"></p>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search tasks..." id="task-search">
+                    </div>
+                    <button id="new-task-btn" class="btn-primary">
+                        <i data-lucide="plus"></i> New Task
+                    </button>
+                </div>
+            </header>
+
+            <section class="task-board">
+                <div id="tasks-container" class="tasks-grid">
+                    <!-- Tasks will be injected here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Create New Task</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" placeholder="e.g. Design Sync" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-date">Date</label>
+                        <input type="date" id="task-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-time">Time</label>
+                        <input type="time" id="task-time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="task-list">List</label>
+                    <select id="task-list">
+                        <!-- Options injected via JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-desc">Description (Optional)</label>
+                    <textarea id="task-desc" rows="3" placeholder="Add some details..."></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="task-reminder">
+                    <label for="task-reminder">Set Reminder Notification</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Welcome Back</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="user@chronoplan.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-primary" style="width: 100%">Sign In</button>
+                </div>
+
+                <div class="social-login-divider">
+                    <span>Or continue with</span>
+                </div>
+
+                <div class="social-btns">
+                    <button type="button" id="google-login-btn" class="social-btn google">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <path fill="#EA4335"
+                                d="M12 5.04c1.94 0 3.73.68 5.13 1.83L21.1 2.9C18.66 1.05 15.53 0 12 0 7.46 0 3.48 2.62 1.54 6.43l4.31 3.34C6.88 7.13 9.24 5.04 12 5.04z" />
+                            <path fill="#4285F4"
+                                d="M23.49 12.27c0-.82-.07-1.61-.21-2.38H12v4.51h6.48c-.28 1.48-1.13 2.74-2.39 3.58l4.31 3.34c2.53-2.33 3.99-5.77 3.99-9.11z" />
+                            <path fill="#FBBC05"
+                                d="M1.54 6.43C.56 8.36 0 10.51 0 12.72c0 2.21.56 4.36 1.54 6.29l4.31-3.34c-.25-.76-.4-1.57-.4-2.42 0-.85.15-1.66.4-2.42l-4.31-3.34z" />
+                            <path fill="#34A853"
+                                d="M12 24c3.24 0 5.95-1.07 7.94-2.91l-4.31-3.34c-1.1.74-2.5 1.18-4.13 1.18-3.17 0-5.85-2.14-6.81-5.02l-4.31 3.34C3.48 21.38 7.46 24 12 24z" />
+                        </svg>
+                        Google
+                    </button>
+                    <button type="button" id="microsoft-login-btn" class="social-btn microsoft">
+                        <svg viewBox="0 0 23 23" width="18" height="18">
+                            <path fill="#f3f3f3" d="M0 0h11v11H0z" />
+                            <path fill="#f3f3f3" d="M11.5 0h11v11h-11z" />
+                            <path fill="#f3f3f3" d="M0 11.5h11v11H0z" />
+                            <path fill="#f3f3f3" d="M11.5 11.5h11v11h-11z" />
+                            <path fill="#f25022" d="M1 1h9v9H1z" />
+                            <path fill="#7fbb00" d="M12.5 1h9v9h-9z" />
+                            <path fill="#00a4ef" d="M1 12.5h9v9H1z" />
+                            <path fill="#ffb900" d="M12.5 12.5h9v9h-9z" />
+                        </svg>
+                        Microsoft
+                    </button>
+                </div>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--text-secondary);">
+                    Don't have an account? <a href="#" style="color: var(--accent-blue);">Sign up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Reminder Ringtone</label>
+                <select id="ringtone-select">
+                    <option value="chime">Crystal Chime</option>
+                    <option value="pulse">Digital Pulse</option>
+                    <option value="zen">Zen Gong</option>
+                    <option value="alert">Tech Alert</option>
+                </select>
+                <button id="test-sound-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">
+                    <i data-lucide="play"></i> Test Sound
+                </button>
+            </div>
+            <div class="form-group">
+                <label>Storage</label>
+                <button id="clear-data-btn" class="btn-secondary"
+                    style="width: 100%; color: var(--danger); border-color: var(--danger);">
+                    Clear All Cache
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button id="logout-btn" class="btn-primary"
+                    style="background: var(--danger); width: 100%;">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements for ringtones -->
+    <audio id="sound-chime" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+    <audio id="sound-pulse" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+    <audio id="sound-zen" src="https://assets.mixkit.co/active_storage/sfx/2566/2566-preview.mp3"></audio>
+    <audio id="sound-alert" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"></audio>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
